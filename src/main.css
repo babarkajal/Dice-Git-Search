@@ -194,4 +194,14 @@
   text-align: center;
   margin: 30px 0;
 }
+
+@media screen and (max-width: 568px) {
+  .search {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+  .search input, .search select, .search button {
+    margin-bottom: 8px;
+  }
+}
 /*# sourceMappingURL=main.css.map */

@@ -24,18 +24,20 @@ function App() {
   };
 
   const getRepoList = async () => {
-    const octokit = new Octokit({});
-
+    //IF SEARCH STRING IS NOT PRESENT
     if (!searchString || !searchString.trim()) {
       setErrorMessage("Please enter search query");
       setTimeout(() => setErrorMessage(""), 5000);
       return;
     }
 
+    //FETCH DATA
+    const octokit = new Octokit({});
     let endPoint = "GET /search/repositories";
     let searchQueryParam = "";
     let filterQueryParam = "";
 
+    //ADD QUERY PARAMETERS WHEN SEARCH STRING OR FILTER IS PRESENT
     if (searchString) {
       searchQueryParam = `?q=${searchString.toString().replace(/\s/, "+")}`;
     }
@@ -43,13 +45,16 @@ function App() {
     if (filter && !customFilter() && filter !== "-1") {
       filterQueryParam = `&sort=${filter}`;
     }
+    
     try {
+      //MAKE REQUEST
       setDataStatus("Loading...");
       const response = await octokit.request(
         endPoint + searchQueryParam + filterQueryParam,
         {}
       );
-      console.log(response);
+
+      //IF WE GOT POSITIVE RESPONSE
       if (response && response.status === 200) {
         //when sorting keys are availed then make request if not then sort the received array
         if (!customFilter()) {
@@ -76,9 +81,9 @@ function App() {
     }
   };
 
-  //CUSTOM SORT: SORT THE LIST
+  //CUSTOM SORT: SORT THE LIST BASED ON FILTER KEY
   const sortRepoList = (list, filter) => {
-    console.log(filter);
+
     if (filter === "name") {
       list.sort((r1, r2) => {
         return r1[`${filter}`]
@@ -97,8 +102,9 @@ function App() {
         return r2[`${filter}`] - r1[`${filter}`];
       });
     }
-    console.log("SET NEW LIST", list);
+
     setResult([...list]);
+
     //!Bubble sort 
     // const tempList = [...list];
     // for (let i = 0; i < tempList.length-1; i++) {
@@ -114,28 +120,24 @@ function App() {
     // return tempList;
   };
 
+
+  //INPUT STRING HANDLER
   const handleInputString = (e) => {
     setSearch(e.target.value);
   };
 
+  //FILTER STRING HANDLER
   const handleFilter = (e) => {
     setFilter(e.target.value);
   };
 
+  //APPLY SEARCH FILTER
   const applySearchFilter = () => {
-    //OR APPLY CUSTOM SORT
-    if (customFilter() && repositories.length) {
-      console.log("sorrt");
-      sortRepoList(repositories, filter);
-    }
-
-    //FOR SORT KEYS, FETCH DATA FROM SERVER
-    else getRepoList();
+    getRepoList();
   };
 
   //*CLEAR FILTER AND SEARCH STATES
   const clearFilter = (e) => {
-    //CLEAR ALL DATA AND STATUS
     setSearchStatus(false);
     setSearch("");
     setFilter("");
@@ -145,7 +147,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1 className="heading">Search repositories</h1>
+      <h1 className="heading">Search Git repositories</h1>
 
       {/* SEARCH */}
       <div className="search">
@@ -171,6 +173,7 @@ function App() {
         <button onClick={applySearchFilter}>Apply</button>
       </div>
 
+      {/* SHOW APPLIED FILTER */}
       {searchApplied && (
         <div className="applied-filters">
           {searchString && (

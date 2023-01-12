@@ -10,7 +10,6 @@ class Repositories extends Component {
         <div className="repo-list">
           {list &&
             list.map((val, index) => {
-              console.log(val.watchers_count)
               return <RepoCard val={val} key={index} />;
             })}
         </div>
